@@ -6,22 +6,32 @@ const app = express();
 app.get('/', (req, res) => res.send('Hello World!'))
 
 app.get('/owners/' , (req, res) => {
-    fs.readdir(`${__dirname}/data/owners/`,'utf8' , (err,data)=>{
-      if(err) res.status(404).send("dir not found");
-      let array=[];
-      console.log(typeof(array));
-      data.forEach((owner) =>{
-        
-        fs.readFile(`${__dirname}/data/owners/${owner}`,'utf8',(err,data)=>{
-          console.log(data)
-          array.push({data});  
-         
-        })
-      })
-      //res.send(array)
+    fs.readdir(`${__dirname}/data/owners/`, 'utf8', (err, files) => {
+        if (err) {
+          res.status(404).send("dir not found");
+          return;
+        }
+        let array = [];
+        let count = 0;
+        if (files.length === 0) {
+          res.send(array);
+          return;
+        }
+        files.forEach((file) => {
+          fs.readFile(`${__dirname}/data/owners/${file}`, 'utf8', (err, data) => {
+            if (!err) {  
+            
+              array.push(JSON.parse(data));
+              console.log(array)
+            }
+            count++;
+            if (count === files.length) {
+              res.send(array);
+            }
+          });
+        });
+      });
     })
-
-})
 
 app.get("/owners/:id", (req, res) => {
   const id = req.params.id;
