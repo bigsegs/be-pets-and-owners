@@ -6,13 +6,20 @@ const app = express();
 app.get('/', (req, res) => res.send('Hello World!'))
 
 app.get('/owners/' , (req, res) => {
-    fs.readdir(`${__dirname}/data/owners`), 'utf8', (err, data) => {
-        if (err) {
-            res.status(404).send('dir not found')
-        } else {
-            res.send(JSON.parse(data))
-        }
-    }
+    fs.readdir(`${__dirname}/data/owners/`,'utf8' , (err,data)=>{
+      if(err) res.status(404).send("dir not found");
+      let array=[];
+      console.log(typeof(array));
+      data.forEach((owner) =>{
+        
+        fs.readFile(`${__dirname}/data/owners/${owner}`,'utf8',(err,data)=>{
+          console.log(data)
+          array.push({data});  
+         
+        })
+      })
+      //res.send(array)
+    })
 
 })
 
